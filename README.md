@@ -1,1 +1,2 @@
-# https://fullstackopen.com/ tehtävä kansio
+# Full Stack Open Assignments
+https://fullstackopen.com/
