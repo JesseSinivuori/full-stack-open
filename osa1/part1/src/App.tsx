@@ -9,17 +9,17 @@ const App = () => {
 
   const Header = (props: { course: string }) => <h1>{props.course}</h1>;
 
-  const Content = (props: { part: string[]; exercises: number[] }) => (
+  const Part = (props: { part: string; exercise: number }) => (
+    <p>
+      {props.part} {props.exercise}
+    </p>
+  );
+
+  const Content = (props: { parts: string[]; exercises: number[] }) => (
     <>
-      <p>
-        {props.part[0]} {props.exercises[0]}
-      </p>
-      <p>
-        {props.part[1]} {props.exercises[1]}
-      </p>
-      <p>
-        {props.part[2]} {props.exercises[2]}
-      </p>
+      <Part part={props.parts[0]} exercise={props.exercises[0]} />
+      <Part part={props.parts[1]} exercise={props.exercises[1]} />
+      <Part part={props.parts[2]} exercise={props.exercises[2]} />
     </>
   );
 
@@ -34,7 +34,7 @@ const App = () => {
     <>
       <Header course={course} />
       <Content
-        part={[part1, part2, part3]}
+        parts={[part1, part2, part3]}
         exercises={[exercises1, exercises2, exercises3]}
       />
       <Total exercises={[exercises1, exercises2, exercises3]} />
