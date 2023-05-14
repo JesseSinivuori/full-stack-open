@@ -3,8 +3,44 @@ type Part = {
   exercises: number;
 };
 
+type Course = {
+  name: string;
+  parts: Part[];
+};
+
+const Header = (props: { course: Course }) => <h1>{props.course.name}</h1>;
+
+const Part = (props: { part: Part }) => {
+  const { name, exercises } = props.part;
+  return (
+    <p>
+      {name} {exercises}
+    </p>
+  );
+};
+
+const Content = (props: { course: Course }) => {
+  const { parts } = props.course;
+  return (
+    <>
+      {parts.map((part) => (
+        <Part part={part} key={part.name} />
+      ))}
+    </>
+  );
+};
+
+const Total = (props: { course: Course }) => {
+  const { parts } = props.course;
+  let sumOfExercices = 0;
+  parts.forEach((part) => {
+    sumOfExercices += part.exercises;
+  });
+  return <p>Number of exercises {sumOfExercices}</p>;
+};
+
 const App = () => {
-  const course = {
+  const course: Course = {
     name: "Half Stack application development",
     parts: [
       {
@@ -22,45 +58,11 @@ const App = () => {
     ],
   };
 
-  const Header = (props: { course: string }) => <h1>{props.course}</h1>;
-
-  const Part = (props: { part: Part }) => {
-    const { name, exercises } = props.part;
-
-    return (
-      <p>
-        {name} {exercises}
-      </p>
-    );
-  };
-
-  const Content = (props: { parts: Part[] }) => {
-    const { parts } = props;
-
-    return (
-      <>
-        {parts.map((part) => (
-          <Part part={part} />
-        ))}
-      </>
-    );
-  };
-
-  const Total = (props: { parts: Part[] }) => {
-    const { parts } = props;
-    return (
-      <p>
-        Number of exercises{" "}
-        {parts[0].exercises + parts[1].exercises + parts[2].exercises}
-      </p>
-    );
-  };
-
   return (
     <>
-      <Header course={course.name} />
-      <Content parts={course.parts} />
-      <Total parts={course.parts} />
+      <Header course={course} />
+      <Content course={course} />
+      <Total course={course} />
     </>
   );
 };
