@@ -16,6 +16,8 @@ const Statistics = (props: { good: number; neutral: number; bad: number }) => {
   const average = (good + neutral * 0 + bad * -1) / all;
   const positive = (good / all) * 100;
 
+  if (all === 0) return <p>no feedback given</p>;
+
   return (
     <>
       <p>good: {good}</p>
@@ -30,9 +32,9 @@ const Statistics = (props: { good: number; neutral: number; bad: number }) => {
 
 const App = () => {
   // tallenna napit omaan tilaansa
-  const [good, setGood] = useState(6);
-  const [neutral, setNeutral] = useState(2);
-  const [bad, setBad] = useState(1);
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
 
   return (
     <>
