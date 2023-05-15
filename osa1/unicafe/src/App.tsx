@@ -10,8 +10,21 @@ const Button = ({
   text: string;
 }) => <button onClick={handleClick}>{text}</button>;
 
-const Statistics = (props: { good: number; neutral: number; bad: number }) => {
-  const { good, neutral, bad } = props;
+const StatisticLine = ({ text, value }: { text: string; value: number }) => (
+  <p>
+    {text}: {value}
+  </p>
+);
+
+const Statistics = ({
+  good,
+  neutral,
+  bad,
+}: {
+  good: number;
+  neutral: number;
+  bad: number;
+}) => {
   const all = good + neutral + bad;
   const average = (good + neutral * 0 + bad * -1) / all;
   const positive = (good / all) * 100;
@@ -20,18 +33,17 @@ const Statistics = (props: { good: number; neutral: number; bad: number }) => {
 
   return (
     <>
-      <p>good: {good}</p>
-      <p>neutral: {neutral}</p>
-      <p>bad: {bad}</p>
-      <p>all: {all}</p>
-      <p>average: {average}</p>
-      <p>positive: {positive} %</p>
+      <StatisticLine text="good" value={good} />
+      <StatisticLine text="neutral" value={neutral} />
+      <StatisticLine text="bad" value={bad} />
+      <StatisticLine text="all" value={all} />
+      <StatisticLine text="average" value={average} />
+      <StatisticLine text="positive" value={positive} />
     </>
   );
 };
 
 const App = () => {
-  // tallenna napit omaan tilaansa
   const [good, setGood] = useState(0);
   const [neutral, setNeutral] = useState(0);
   const [bad, setBad] = useState(0);
