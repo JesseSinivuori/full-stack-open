@@ -10,10 +10,11 @@ const Button = ({
   text: string;
 }) => <button onClick={handleClick}>{text}</button>;
 
-const StatisticLine = ({ text, value }: { text: string; value: number }) => (
-  <p>
-    {text}: {value}
-  </p>
+const StatisticLine = ({ text, value }: { text: string; value: string }) => (
+  <tr>
+    <td>{text}</td>
+    <td>{value}</td>
+  </tr>
 );
 
 const Statistics = ({
@@ -32,14 +33,19 @@ const Statistics = ({
   if (all === 0) return <p>no feedback given</p>;
 
   return (
-    <>
-      <StatisticLine text="good" value={good} />
-      <StatisticLine text="neutral" value={neutral} />
-      <StatisticLine text="bad" value={bad} />
-      <StatisticLine text="all" value={all} />
-      <StatisticLine text="average" value={average} />
-      <StatisticLine text="positive" value={positive} />
-    </>
+    <table>
+      <tbody>
+        <StatisticLine text="good" value={good.toString()} />
+        <StatisticLine text="neutral" value={neutral.toString()} />
+        <StatisticLine text="bad" value={bad.toString()} />
+        <StatisticLine text="all" value={all.toString()} />
+        <StatisticLine text="average" value={average.toFixed(1).toString()} />
+        <StatisticLine
+          text="positive"
+          value={`${positive.toFixed(1).toString()} %`}
+        />
+      </tbody>
+    </table>
   );
 };
 
