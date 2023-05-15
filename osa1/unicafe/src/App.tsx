@@ -12,21 +12,27 @@ const Button = ({
 
 const Statistics = (props: { good: number; neutral: number; bad: number }) => {
   const { good, neutral, bad } = props;
+  const all = good + neutral + bad;
+  const average = (good + neutral * 0 + bad * -1) / all;
+  const positive = (good / all) * 100;
 
   return (
     <>
       <p>good: {good}</p>
       <p>neutral: {neutral}</p>
       <p>bad: {bad}</p>
+      <p>all: {all}</p>
+      <p>average: {average}</p>
+      <p>positive: {positive} %</p>
     </>
   );
 };
 
 const App = () => {
   // tallenna napit omaan tilaansa
-  const [good, setGood] = useState(1);
+  const [good, setGood] = useState(6);
   const [neutral, setNeutral] = useState(2);
-  const [bad, setBad] = useState(3);
+  const [bad, setBad] = useState(1);
 
   return (
     <>
