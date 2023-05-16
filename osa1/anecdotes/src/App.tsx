@@ -8,7 +8,9 @@ const Button = ({
   handleClick: () => void;
 }) => <button onClick={handleClick}>{text}</button>;
 
-const Anecdotes = ({
+const Header = ({ text }: { text: string }) => <h1>{text}</h1>;
+
+const Anecdote = ({
   anecdotes,
   selected,
   votes,
@@ -17,11 +19,9 @@ const Anecdotes = ({
   selected: number;
   votes: number[];
 }) => (
-  <div>
-    <p>
-      {anecdotes[selected]} has {votes[selected]} votes
-    </p>
-  </div>
+  <p>
+    {anecdotes[selected]} has {votes[selected]} votes
+  </p>
 );
 
 const App = () => {
@@ -38,6 +38,8 @@ const App = () => {
 
   const [selected, setSelected] = useState(0);
   const [votes, setVotes] = useState<number[]>(Array(anecdotes.length).fill(0));
+  const mostVotes = Math.max(...votes);
+  const mostVoted = votes.indexOf(mostVotes);
 
   const randomNum = () => Number((Math.random() * anecdotes.length).toFixed());
 
@@ -59,9 +61,12 @@ const App = () => {
 
   return (
     <div>
+      <Header text={"Anecdote of the day"} />
       <Button text={"vote"} handleClick={handleVote} />
       <Button text={"next anecdote"} handleClick={handleNextAnecdote} />
-      <Anecdotes anecdotes={anecdotes} selected={selected} votes={votes} />
+      <Anecdote anecdotes={anecdotes} selected={selected} votes={votes} />
+      <Header text={"Anecdote with most votes"} />
+      <Anecdote anecdotes={anecdotes} selected={mostVoted} votes={votes} />
     </div>
   );
 };
