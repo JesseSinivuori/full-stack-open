@@ -1,7 +1,7 @@
 import { type Part } from "../App";
 
-const Part = (props: { part: Part }) => {
-  const { name, exercises } = props.part;
+const Part = ({ part }: { part: Part }) => {
+  const { name, exercises } = part;
   return (
     <p>
       {name} {exercises}
