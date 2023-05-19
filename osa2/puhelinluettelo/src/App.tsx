@@ -3,11 +3,12 @@ import Input from "./components/Input";
 import Header from "./components/Header";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
-import axios from "axios";
+import personsService from "./services/persons";
 
 export type TypePerson = {
   name: string;
   number?: string;
+  id?: number;
 };
 
 const App = () => {
@@ -20,15 +21,15 @@ const App = () => {
   );
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then((response) => setPersons(response.data));
+    personsService.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
+    });
   }, []);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const newPerson = {
+    const newPerson: TypePerson = {
       name: newName,
       number: newNumber,
     };
@@ -36,7 +37,9 @@ const App = () => {
     if (persons.some((person) => person.name === newPerson.name)) {
       alert(`${newName} is already added to phonebook`);
     } else {
-      setPersons(persons.concat(newPerson));
+      personsService
+        .create(newPerson)
+        .then((newPerson) => setPersons(persons.concat(newPerson)));
     }
 
     setNewName("");
