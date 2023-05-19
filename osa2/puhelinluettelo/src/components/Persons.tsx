@@ -11,7 +11,7 @@ const Persons = ({
 }) => (
   <>
     {filteredPersons.map((person) => (
-      <div key={person.name}>
+      <div key={person.name + person.number + person.id}>
         <Person person={person} />
         <Button
           text={"delete"}

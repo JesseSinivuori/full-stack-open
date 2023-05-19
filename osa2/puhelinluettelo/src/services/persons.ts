@@ -8,23 +8,17 @@ const getAll = async () => {
   return request.then((response) => response.data as TypePerson[]);
 };
 
-const create = (newObject: TypePerson) => {
+const create = async (newObject: TypePerson) => {
   const request = axios.post(baseUrl, newObject);
   return request.then((response) => response.data as TypePerson);
 };
 
-const update = async ({
-  id,
-  newObject,
-}: {
-  id: number;
-  newObject: TypePerson;
-}) => {
+const update = async (id: number, newObject: TypePerson) => {
   const request = axios.put(`${baseUrl}/${id}`, newObject);
   return request.then((response) => response.data as TypePerson);
 };
 
-const remove = ({ id }: { id: number }) => {
+const remove = async (id: number) => {
   id && axios.delete(`${baseUrl}/${id}`);
 };
 
