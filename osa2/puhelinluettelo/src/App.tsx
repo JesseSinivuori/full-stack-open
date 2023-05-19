@@ -23,6 +23,9 @@ const App = () => {
   const [notificationMessage, setNotificationMessage] = useState<string | null>(
     null
   );
+  const [notificationType, setNotificationType] = useState<"success" | "error">(
+    "success"
+  );
 
   useEffect(() => {
     personsService.getAll().then((initialPersons) => {
@@ -57,23 +60,32 @@ const App = () => {
                   person.id !== existingPerson.id ? person : newPerson
                 )
               );
+            })
+            .catch(() => {
+              notfication(
+                `Information of ${newPerson.name} has already been removed from the server`,
+                "error"
+              );
             });
-        notfication(`${newPerson.name} number changed`);
+        notfication(`${newPerson.name} number changed`, "success");
       }
     } else {
       personsService
         .create(newPerson)
         .then((newPerson) => setPersons(persons.concat(newPerson)));
-      notfication(`Added ${newPerson.name}`);
+      notfication(`Added ${newPerson.name}`, "success");
     }
 
     setNewName("");
     setNewNumber("");
   };
 
-  const notfication = (message: string) => {
+  const notfication = (message: string, type: "success" | "error") => {
+    type === "success"
+      ? setNotificationType("success")
+      : setNotificationType("error");
     setNotificationMessage(message);
-    setTimeout(() => setNotificationMessage(null), 1500);
+    setTimeout(() => setNotificationMessage(null), 2000);
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,7 +106,7 @@ const App = () => {
       if (window.confirm(`Delete ${name}?`)) {
         personsService.remove(id);
         setPersons(persons.filter((person) => person.id !== id));
-        notfication(`${person.name} deleted`);
+        notfication(`${person.name} deleted`, "success");
       }
     }
   };
@@ -102,7 +114,10 @@ const App = () => {
   return (
     <div>
       <Header text={"Phonebook"} />
-      <Notification message={notificationMessage} />
+      <Notification
+        message={notificationMessage}
+        notificationType={notificationType}
+      />
       <Input
         value={filter}
         handleChange={handleFilterChange}
