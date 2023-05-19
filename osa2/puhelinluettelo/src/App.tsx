@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "./components/Input";
 import Header from "./components/Header";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import axios from "axios";
 
 export type TypePerson = {
   name: string;
@@ -10,19 +11,19 @@ export type TypePerson = {
 };
 
 const App = () => {
-  const [persons, setPersons] = useState<TypePerson[]>([
-    { name: "Arto Hellas", number: "040-123456" },
-    { name: "Ada Lovelace", number: "39-44-5323523" },
-    { name: "Dan Abramov", number: "12-43-234345" },
-    { name: "Mary Poppendieck", number: "39-23-6423122" },
-  ]);
+  const [persons, setPersons] = useState<TypePerson[]>([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
-
   const [filter, setFilter] = useState("");
   const filteredPersons = persons.filter((person) =>
     person.name.toLowerCase().includes(filter)
   );
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/persons")
+      .then((response) => setPersons(response.data));
+  }, []);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
