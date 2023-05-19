@@ -4,6 +4,7 @@ import Header from "./components/Header";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import personsService from "./services/persons";
+import Notification from "./components/Notification";
 
 export type TypePerson = {
   name: string;
@@ -18,6 +19,9 @@ const App = () => {
   const [filter, setFilter] = useState("");
   const filteredPersons = persons.filter((person) =>
     person.name.toLowerCase().includes(filter)
+  );
+  const [notificationMessage, setNotificationMessage] = useState<string | null>(
+    null
   );
 
   useEffect(() => {
@@ -54,15 +58,22 @@ const App = () => {
                 )
               );
             });
+        notfication(`${newPerson.name} number changed`);
       }
     } else {
       personsService
         .create(newPerson)
         .then((newPerson) => setPersons(persons.concat(newPerson)));
+      notfication(`Added ${newPerson.name}`);
     }
 
     setNewName("");
     setNewNumber("");
+  };
+
+  const notfication = (message: string) => {
+    setNotificationMessage(message);
+    setTimeout(() => setNotificationMessage(null), 1500);
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,6 +94,7 @@ const App = () => {
       if (window.confirm(`Delete ${name}?`)) {
         personsService.remove(id);
         setPersons(persons.filter((person) => person.id !== id));
+        notfication(`${person.name} deleted`);
       }
     }
   };
@@ -90,6 +102,7 @@ const App = () => {
   return (
     <div>
       <Header text={"Phonebook"} />
+      <Notification message={notificationMessage} />
       <Input
         value={filter}
         handleChange={handleFilterChange}
