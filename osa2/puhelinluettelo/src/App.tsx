@@ -1,22 +1,28 @@
 import { useState } from "react";
+import Input from "./components/Input";
+import Header from "./components/Header";
+import PersonForm from "./components/PersonForm";
+import Persons from "./components/Persons";
 
-export type Person = {
+export type TypePerson = {
   name: string;
   number?: string;
 };
 
-const Person = ({ person }: { person: Person }) => (
-  <p>
-    {person.name} {person.number}
-  </p>
-);
-
 const App = () => {
-  const [persons, setPersons] = useState<Person[]>([
-    { name: "Arto Hellas", number: "+3581234567" },
+  const [persons, setPersons] = useState<TypePerson[]>([
+    { name: "Arto Hellas", number: "040-123456" },
+    { name: "Ada Lovelace", number: "39-44-5323523" },
+    { name: "Dan Abramov", number: "12-43-234345" },
+    { name: "Mary Poppendieck", number: "39-23-6423122" },
   ]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
+
+  const [filter, setFilter] = useState("");
+  const filteredPersons = persons.filter((person) =>
+    person.name.toLowerCase().includes(filter)
+  );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,6 +39,7 @@ const App = () => {
     }
 
     setNewName("");
+    setNewNumber("");
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,24 +50,27 @@ const App = () => {
     setNewNumber(e.target.value);
   };
 
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilter(e.target.value);
+  };
+
   return (
     <div>
-      <h2>Phonebook</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      {persons.map((person) => (
-        <Person person={person} key={person.name} />
-      ))}
+      <Header text={"Phonebook"} />
+      <Input
+        value={filter}
+        handleChange={handleFilterChange}
+        text={"filter shown with: "}
+      />
+      <PersonForm
+        handleSubmit={handleSubmit}
+        newName={newName}
+        handleNameChange={handleNameChange}
+        newNumber={newNumber}
+        handleNumberChange={handleNumberChange}
+      />
+      <Header text={"Numbers"} />
+      <Persons filteredPersons={filteredPersons} />
     </div>
   );
 };
