@@ -58,6 +58,16 @@ const App = () => {
     setFilter(e.target.value);
   };
 
+  const handleDeletePerson = (person: TypePerson) => {
+    const { id, name } = person;
+    if (id) {
+      if (window.confirm(`Delete ${name}?`)) {
+        personsService.remove({ id: id });
+        setPersons(persons.filter((person) => person.id !== id));
+      }
+    }
+  };
+
   return (
     <div>
       <Header text={"Phonebook"} />
@@ -74,7 +84,10 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <Header text={"Numbers"} />
-      <Persons filteredPersons={filteredPersons} />
+      <Persons
+        filteredPersons={filteredPersons}
+        handleDeletePerson={handleDeletePerson}
+      />
     </div>
   );
 };

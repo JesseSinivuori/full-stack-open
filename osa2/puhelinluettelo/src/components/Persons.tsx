@@ -1,10 +1,23 @@
 import { type TypePerson } from "../App";
+import Button from "./Button";
 import Person from "./Person";
 
-const Persons = ({ filteredPersons }: { filteredPersons: TypePerson[] }) => (
+const Persons = ({
+  filteredPersons,
+  handleDeletePerson,
+}: {
+  filteredPersons: TypePerson[];
+  handleDeletePerson: (person: TypePerson) => void;
+}) => (
   <>
     {filteredPersons.map((person) => (
-      <Person person={person} key={person.name} />
+      <div key={person.name}>
+        <Person person={person} />
+        <Button
+          text={"delete"}
+          handleClick={() => handleDeletePerson(person)}
+        />
+      </div>
     ))}
   </>
 );

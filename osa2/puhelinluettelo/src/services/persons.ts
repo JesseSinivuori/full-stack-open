@@ -24,8 +24,13 @@ const update = async ({
   return request.then((response) => response.data as TypePerson);
 };
 
+const remove = ({ id }: { id: number }) => {
+  id && axios.delete(`${baseUrl}/${id}`);
+};
+
 export default {
   getAll,
   create,
   update,
+  remove,
 };

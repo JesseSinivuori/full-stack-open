@@ -1,9 +1,9 @@
 import { type TypePerson } from "../App";
 
 const Person = ({ person }: { person: TypePerson }) => (
-  <p>
+  <div>
     {person.name} {person.number}
-  </p>
+  </div>
 );
 
 export default Person;
