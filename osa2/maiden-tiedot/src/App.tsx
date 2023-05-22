@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Country from "./components/Country";
+import { getWeather } from "./services/weather";
 
 export type CountryT = {
   name: {
@@ -12,29 +13,60 @@ export type CountryT = {
   flags: {
     png: string;
   };
+  latlng: number[];
+};
+
+export type Weather = {
+  main: {
+    temp: number;
+  };
+  wind: {
+    speed: number;
+  };
+  weather: {
+    icon: string;
+  }[];
 };
 
 function App() {
   const [countries, setCountries] = useState<CountryT[]>([]);
-  const [filter, setFilter] = useState("fi");
-  const [selectedCountryName, setSelectedCountryName] = useState("finland");
-  const filteredCountries = countries.filter((country) =>
-    country.name.common.toLowerCase().includes(filter.toLowerCase())
-  );
+  const [filter, setFilter] = useState("");
+  const [selectedCountryName, setSelectedCountryName] = useState("");
+  const [filteredCountries, setFilteredCountries] = useState<CountryT[]>([]);
   const selectedCountry = filteredCountries.find(
     (country) => country.name.common.toLowerCase() === selectedCountryName
   );
+  const [weather, setWeather] = useState<Weather>();
 
   useEffect(() => {
-    const response = axios.get(`http://localhost:3001/countries`); //https://restcountries.com/v3.1/all
+    const response = axios.get(`https://restcountries.com/v3.1/all`); //or http://localhost:3001/countries
     response
       .then((response) => response.data)
       .then((countries) => setCountries(countries));
   }, []);
 
   useEffect(() => {
-    setSelectedCountryName("");
-  }, [filter]);
+    if (filter) {
+      setFilteredCountries(
+        countries.filter((country) =>
+          country.name.common.toLowerCase().includes(filter.toLowerCase())
+        )
+      );
+    }
+  }, [countries, filter]);
+
+  useEffect(() => {
+    if (filteredCountries.length === 1) {
+      setSelectedCountryName(filteredCountries[0].name.common.toLowerCase());
+    }
+  }, [filteredCountries, selectedCountry]);
+
+  useEffect(() => {
+    if (selectedCountry) {
+      setFilteredCountries([selectedCountry]);
+      getWeather(selectedCountry).then((weather) => setWeather(weather));
+    }
+  }, [selectedCountry]);
 
   return (
     <div>
@@ -44,7 +76,7 @@ function App() {
         value={filter}
         onChange={(e) => setFilter(e.target.value)}
       />
-      {filter !== "" && selectedCountryName === "" && (
+      {filter !== "" && (
         <div>
           {filteredCountries.length < 10 ? (
             filteredCountries.map((country) => (
@@ -53,20 +85,13 @@ function App() {
                 country={country}
                 expand={filteredCountries.length === 1}
                 setSelectedCountryName={setSelectedCountryName}
+                weather={weather}
               />
             ))
           ) : (
             <p>Too many matches, specify another filter</p>
           )}
         </div>
-      )}
-      {selectedCountry && (
-        <Country
-          key={selectedCountry.name.common}
-          country={selectedCountry}
-          expand={true}
-          setSelectedCountryName={setSelectedCountryName}
-        />
       )}
     </div>
   );
