@@ -1,4 +1,3 @@
-const http = require("http");
 const express = require("express");
 const config = require("./utils/config");
 const mongoose = require("mongoose");

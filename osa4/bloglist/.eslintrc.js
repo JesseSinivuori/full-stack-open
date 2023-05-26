@@ -4,6 +4,7 @@ module.exports = {
     commonjs: true,
     es2021: true,
     node: true,
+    jest: true,
   },
   extends: "eslint:recommended",
   overrides: [],
@@ -12,8 +13,11 @@ module.exports = {
   },
   rules: {
     indent: ["error", 2],
-    "linebreak-style": ["unix"],
     quotes: ["error", "double"],
     semi: ["error", "always"],
+    eqeqeq: "error",
+    "no-trailing-spaces": "error",
+    "object-curly-spacing": ["error", "always"],
+    "no-console": 0,
   },
 };

@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "test",
+    "test": "npm run jest && npm run lint",
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "jest": "jest --verbose"
   },
   "author": "Jesse Sinivuori",
   "license": "ISC",
@@ -20,6 +21,10 @@
   },
   "devDependencies": {
     "eslint": "^8.41.0",
+    "jest": "^29.5.0",
     "nodemon": "^2.0.22"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
