@@ -1,4 +1,9 @@
-const { totalLikes, favoriteBlog } = require("../utils/list_helper");
+const {
+  totalLikes,
+  favoriteBlog,
+  mostBlogs,
+  mostLikes,
+} = require("../utils/list_helper");
 
 describe("total likes", () => {
   test("when list has only one blog equals the likes of that", () => {
@@ -21,6 +26,52 @@ describe("blog with the most likes", () => {
   test("blog with the most likes", () => {
     const result = favoriteBlog(blogs);
     expect(result).toEqual(blogs[2]);
+  });
+});
+
+describe("most blogs", () => {
+  test("when there's one blog", () => {
+    const result = mostBlogs(listWithOneBlog);
+    expect(result).toEqual({
+      author: "Edsger W. Dijkstra",
+      blogs: 1,
+    });
+  });
+
+  test("author with the most blogs", () => {
+    const result = mostBlogs(blogs);
+    expect(result).toEqual({
+      author: "Robert C. Martin",
+      blogs: 3,
+    });
+  });
+
+  test("when there's 2 bloggers with the most blogs it will show the latest one", () => {
+    const moreBlogs = blogs.concat(
+      Array(3).fill({
+        _id: "hgfhfhu6ru67hghf4567",
+        title: "hgfjtfj6rf",
+        author: "Robert",
+        url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/hghfghththds.html",
+        likes: 2,
+        __v: 0,
+      })
+    );
+    const result = mostBlogs(moreBlogs);
+    expect(result).toEqual({
+      author: "Robert",
+      blogs: 3,
+    });
+  });
+});
+
+describe("most likes", () => {
+  test("author with most likes", () => {
+    const result = mostLikes(blogs);
+    expect(result).toEqual({
+      author: "Edsger W. Dijkstra",
+      likes: 17,
+    });
   });
 });
 
