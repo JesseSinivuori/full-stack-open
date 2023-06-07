@@ -1,10 +1,12 @@
 const express = require("express");
 const config = require("./utils/config");
+require("express-async-errors");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const morgan = require("morgan");
 const blogsRouter = require("./controllers/blogs");
 const { info, error } = require("./utils/logger");
+const { errorHandler, unknownEndpoint } = require("./utils/errorHandler");
 
 const app = express();
 
@@ -37,5 +39,7 @@ app.use(
   })
 );
 app.use("/api/blogs", blogsRouter);
+app.use(errorHandler);
+app.use(unknownEndpoint);
 
 module.exports = app;
