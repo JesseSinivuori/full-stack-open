@@ -53,17 +53,27 @@ test("a valid blog can be added", async () => {
 });
 
 test("blog without title is not added", async () => {
-  const newBlog = {
+  const newBlogwithoutTitle = {
     author: "Edsger W. Dijkstra",
     url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
     likes: 5,
   };
 
-  await api
-    .post("/api/blogs")
-    .send(newBlog)
-    .expect(400)
-    .expect("Content-Type", /application\/json/);
+  await api.post("/api/blogs").send(newBlogwithoutTitle).expect(400);
+
+  const blogsAtEnd = await blogsInDb();
+
+  expect(blogsAtEnd).toHaveLength(initialBlogs.length);
+});
+
+test("blog without url is not added", async () => {
+  const newBlogwithoutUrl = {
+    title: "Title",
+    author: "Edsger W. Dijkstra",
+    likes: 5,
+  };
+
+  await api.post("/api/blogs").send(newBlogwithoutUrl).expect(400);
 
   const blogsAtEnd = await blogsInDb();
 
@@ -74,6 +84,19 @@ test("blogs have id property", async () => {
   const blogs = await blogsInDb();
   const blogsIds = blogs.map((blog) => blog.id);
   expect(blogsIds).toBeDefined();
+});
+
+test("if likes is not set, it will be 0", async () => {
+  const newBlog = {
+    title: "New Title",
+    author: "Author",
+    url: "url",
+  };
+  await api.post("/api/blogs").send(newBlog);
+  const blogsAtEnd = await blogsInDb();
+  const savedBlog = blogsAtEnd[blogsAtEnd.length - 1];
+
+  expect(savedBlog.likes).toEqual(0);
 });
 
 afterAll(async () => {
