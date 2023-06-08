@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const morgan = require("morgan");
 const blogsRouter = require("./controllers/blogs");
+const usersRouter = require("./controllers/users");
 const { info, error } = require("./utils/logger");
 const { errorHandler, unknownEndpoint } = require("./utils/errorHandler");
 
@@ -38,6 +39,7 @@ app.use(
     ].join(" ");
   })
 );
+app.use("/api/users", usersRouter);
 app.use("/api/blogs", blogsRouter);
 app.use(errorHandler);
 app.use(unknownEndpoint);

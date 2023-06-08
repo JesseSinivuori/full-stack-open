@@ -1,11 +1,12 @@
-@baseUrl = http://localhost:3001
+@baseUrl = http://localhost:3001/api/blogs
 
 ### Get all blogs
-GET {{baseUrl}}/api/blogs
+GET {{baseUrl}}
 
 ### Post a blog
 # @name postBlog
-POST {{baseUrl}}/api/blogs
+@id = {{postBlog.response.body.$.id}}
+POST {{baseUrl}}
 Content-Type: application/json
 
 {
@@ -16,8 +17,8 @@ Content-Type: application/json
 }
 
 ### Update the posted blog
-@id = {{postBlog.response.body.$.id}}
-PUT {{baseUrl}}/api/blogs/{{id}}
+
+PUT {{baseUrl}}/{{id}}
 Content-Type: application/json
 
 {
@@ -28,6 +29,6 @@ Content-Type: application/json
 }
 
 ### Delete the posted a blog
-DELETE {{baseUrl}}/api/blogs/{{id}}
+DELETE {{baseUrl}}/{{id}}
 
 
