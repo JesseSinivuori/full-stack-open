@@ -118,6 +118,57 @@ describe("deletion of a blog", () => {
   });
 });
 
+describe("updating a blog", () => {
+  test("succeeds with status code 200 if blog is valid", async () => {
+    const blogsAtStart = await blogsInDb();
+    const blogToUpdate = blogsAtStart[0];
+    const updatedBlog = {
+      title: "This",
+      author: "Is",
+      url: "Updated",
+      likes: 7,
+      id: blogToUpdate.id,
+    };
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(updatedBlog)
+      .expect(200);
+
+    const blogsAtEnd = await blogsInDb();
+    const updatedBlogAtEnd = blogsAtEnd[0];
+
+    expect(updatedBlogAtEnd).toEqual(updatedBlog);
+  });
+  test("succees with status code 200 if only likes is updated", async () => {
+    const blogsAtStart = await blogsInDb();
+    const blogToUpdate = blogsAtStart[0];
+    const blogWithoutOnlyLikes = {
+      likes: 58,
+      id: blogToUpdate.id,
+    };
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(blogWithoutOnlyLikes)
+      .expect(200);
+
+    const blogsAtEnd = await blogsInDb();
+    const updatedBlogAtEnd = blogsAtEnd[0];
+
+    expect(updatedBlogAtEnd.likes).toEqual(blogWithoutOnlyLikes.likes);
+  });
+  test("fails with status code 400 if id is not valid", async () => {
+    const updatedBlog = {
+      title: "This",
+      author: "Is",
+      url: "Updated",
+      likes: 7,
+    };
+    await api.put("/api/blogs/thisidisnotvalid").send(updatedBlog).expect(400);
+  });
+});
+
 afterAll(async () => {
   await mongoose.connection.close();
 });

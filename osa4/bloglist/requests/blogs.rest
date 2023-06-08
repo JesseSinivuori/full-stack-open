@@ -15,7 +15,19 @@ Content-Type: application/json
     "likes": 0
 }
 
+### Update the posted blog
+@id = {{postBlog.response.body.$.id}}
+PUT {{baseUrl}}/api/blogs/{{id}}
+Content-Type: application/json
+
+{
+    "title": "This",
+    "author": "Is",
+    "url": "Updated",
+    "likes": 1
+}
 
 ### Delete the posted a blog
-@id = {{postBlog.response.body.$.id}}
 DELETE {{baseUrl}}/api/blogs/{{id}}
+
+
