@@ -27,4 +27,4 @@ Content-Type: application/json
 
 ### Delete the created user
 
-DELETE {{baseUrl}}/{{id}}
+DELETE {{baseUrl}}/648321ffcc84d31887f76779

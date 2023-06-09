@@ -44,5 +44,6 @@ Content-Type: application/json
 
 ### Delete the posted a blog
 DELETE {{baseUrl}}/{{id}}
+Authorization: bearer {{token}}
 
 
