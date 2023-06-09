@@ -10,9 +10,9 @@ POST {{baseUrl}}
 Content-Type: application/json
 
 {
-    "username": "mluukkai",
-    "name": "Matti Luukkainen",
-    "password": "salainen"
+    "username": "Author",
+    "name": "Author",
+    "password": "author"
 }
 
 ### Update user
