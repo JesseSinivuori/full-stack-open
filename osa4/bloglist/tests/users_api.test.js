@@ -5,16 +5,16 @@ const app = require("../app");
 const supertest = require("supertest");
 const api = supertest(app);
 
+beforeEach(async () => {
+  await User.deleteMany({});
+
+  const passwordHash = await bcrypt.hash("sekret", 10);
+  const user = new User({ username: "root", passwordHash });
+
+  await user.save();
+});
+
 describe("when there is initially one user at db", () => {
-  beforeEach(async () => {
-    await User.deleteMany({});
-
-    const passwordHash = await bcrypt.hash("sekret", 10);
-    const user = new User({ username: "root", passwordHash });
-
-    await user.save();
-  });
-
   test("creation succeeds with a fresh username", async () => {
     const usersAtStart = await usersInDb();
 
@@ -54,6 +54,69 @@ describe("when there is initially one user at db", () => {
 
     expect(result.body.error).toContain("expected `username` to be unique");
 
+    const usersAtEnd = await usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
+});
+
+describe("creating a user", () => {
+  test("fails with status code 400 if username is less than 3 characters long", async () => {
+    const usersAtStart = await usersInDb();
+    const user = {
+      username: "ro",
+      name: "Superuser",
+      password: "salainen",
+    };
+
+    const res = await api.post("/api/users").send(user).expect(400);
+    expect(res.body.error).toContain(
+      "is shorter than the minimum allowed length (3)."
+    );
+    const usersAtEnd = await usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
+  test("fails with status code 400 if password is less than 3 characters long", async () => {
+    const usersAtStart = await usersInDb();
+    const user = {
+      username: "root",
+      name: "Superuser",
+      password: "sa",
+    };
+
+    const res = await api.post("/api/users").send(user).expect(400);
+    expect(res.body.error).toContain(
+      "Password needs to be at least 3 characters long."
+    );
+    const usersAtEnd = await usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
+  test("fails with status code 400 if both, name and password are less than 3 characters long", async () => {
+    const usersAtStart = await usersInDb();
+    const user = {
+      username: "ro",
+      name: "Superuser",
+      password: "sa",
+    };
+
+    const res = await api.post("/api/users").send(user).expect(400);
+    expect(res.body.error).toContain(
+      "Name and password needs to be at least 3 characters long."
+    );
+    const usersAtEnd = await usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
+  test("fails with status code 400 if name is not unique", async () => {
+    const usersAtStart = await usersInDb();
+    const user = {
+      username: "root",
+      name: "Superuser",
+      password: "salainen",
+    };
+
+    const res = await api.post("/api/users").send(user).expect(400);
+    expect(res.body.error).toContain(
+      "User validation failed: username: Error, expected `username` to be unique."
+    );
     const usersAtEnd = await usersInDb();
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
   });
