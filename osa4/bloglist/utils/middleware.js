@@ -1,4 +1,6 @@
 const jwt = require("jsonwebtoken");
+const Blog = require("../models/blog");
+const User = require("../models/user");
 
 const auth = (req, res, next) => {
   const authorization = req.get("authorization");
@@ -21,4 +23,21 @@ const auth = (req, res, next) => {
   next();
 };
 
-module.exports = auth;
+const authEdit = async (req, res, next) => {
+  const user = await User.findById(req.token);
+  const blog = await Blog.findById(req.params.id);
+
+  if (!blog) {
+    return res.status(404).send({ error: "blog not found" });
+  }
+
+  if (blog.user.toString() !== user.id.toString()) {
+    return res.status(401).end();
+  }
+
+  req.user = user.id.toString();
+  console.log(req.user);
+  next();
+};
+
+module.exports = { auth, authEdit };
