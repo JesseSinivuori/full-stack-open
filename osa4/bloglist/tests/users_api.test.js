@@ -1,15 +1,22 @@
+const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const Blog = require("../models/blog");
 const User = require("../models/user");
-const { usersInDb } = require("./test_helper");
+const { usersInDb, initialUsers, initialBlogs } = require("./test_helper");
 const app = require("../app");
 const supertest = require("supertest");
 const api = supertest(app);
 
 beforeEach(async () => {
   await User.deleteMany({});
+  await Blog.deleteMany({});
 
-  const passwordHash = await bcrypt.hash("sekret", 10);
-  const user = new User({ username: "root", passwordHash });
+  const passwordHash = await bcrypt.hash("user", 10);
+  const user = new User({
+    username: "User",
+    name: "user",
+    passwordHash,
+  });
 
   await user.save();
 });
@@ -21,7 +28,7 @@ describe("when there is initially one user at db", () => {
     const newUser = {
       username: "mluukkai",
       name: "Matti Luukkainen",
-      password: "salainen",
+      password: "password",
     };
 
     await api
@@ -41,9 +48,9 @@ describe("when there is initially one user at db", () => {
     const usersAtStart = await usersInDb();
 
     const newUser = {
-      username: "root",
-      name: "Superuser",
-      password: "salainen",
+      username: "User",
+      name: "User",
+      password: "user",
     };
 
     const result = await api
@@ -65,7 +72,7 @@ describe("creating a user", () => {
     const user = {
       username: "ro",
       name: "Superuser",
-      password: "salainen",
+      password: "password",
     };
 
     const res = await api.post("/api/users").send(user).expect(400);
@@ -78,7 +85,7 @@ describe("creating a user", () => {
   test("fails with status code 400 if password is less than 3 characters long", async () => {
     const usersAtStart = await usersInDb();
     const user = {
-      username: "root",
+      username: "user",
       name: "Superuser",
       password: "sa",
     };
@@ -105,19 +112,25 @@ describe("creating a user", () => {
     const usersAtEnd = await usersInDb();
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
   });
-  test("fails with status code 400 if name is not unique", async () => {
-    const usersAtStart = await usersInDb();
-    const user = {
-      username: "root",
-      name: "Superuser",
-      password: "salainen",
-    };
+});
 
-    const res = await api.post("/api/users").send(user).expect(400);
-    expect(res.body.error).toContain(
-      "User validation failed: username: Error, expected `username` to be unique."
-    );
-    const usersAtEnd = await usersInDb();
-    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+describe("when theres initial users with blogs in the database", () => {
+  beforeEach(async () => {
+    const users = initialUsers.map((user) => {
+      const blogs = initialBlogs
+        .filter((blog) => blog.user === user.id)
+        .map((blog) => blog.id);
+      return { ...user, blogs: blogs };
+    });
+    await User.insertMany(users);
   });
+  test("users have a blog property", async () => {
+    const users = await usersInDb();
+    const blogs = users.map((user) => user.blog);
+    expect(blogs).toBeDefined();
+  });
+});
+
+afterAll(async () => {
+  await mongoose.connection.close();
 });

@@ -19,13 +19,13 @@ blogsRouter.get("/:id", async (req, res) => {
 
 blogsRouter.delete("/:id", auth, authEdit, async (req, res) => {
   await Blog.findByIdAndDelete(req.params.id);
-  res.status(204).json();
+  res.status(204).end();
 });
 
 blogsRouter.post("/", auth, async (req, res) => {
   const { title, author, url, likes } = req.body;
 
-  const user = await User.findById(req.token);
+  const user = await User.findById(req.userId);
   const blog = new Blog({
     title: title,
     author: author,

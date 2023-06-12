@@ -4,6 +4,7 @@ const {
   mostBlogs,
   mostLikes,
 } = require("../utils/list_helper");
+const mongoose = require("mongoose");
 
 describe("total likes", () => {
   test("when list has only one blog equals the likes of that", () => {
@@ -18,7 +19,7 @@ describe("total likes", () => {
 });
 
 describe("blog with the most likes", () => {
-  test("when there's one blog", () => {
+  test("when theres one blog", () => {
     const result = favoriteBlog(listWithOneBlog);
     expect(result).toEqual(listWithOneBlog[0]);
   });
@@ -30,7 +31,7 @@ describe("blog with the most likes", () => {
 });
 
 describe("most blogs", () => {
-  test("when there's one blog", () => {
+  test("when theres one blog", () => {
     const result = mostBlogs(listWithOneBlog);
     expect(result).toEqual({
       author: "Edsger W. Dijkstra",
@@ -46,7 +47,7 @@ describe("most blogs", () => {
     });
   });
 
-  test("when there's 2 bloggers with the most blogs it will show the latest one", () => {
+  test("when theres 2 bloggers with the most blogs it will show the latest one", () => {
     const moreBlogs = blogs.concat(
       Array(3).fill({
         _id: "hgfhfhu6ru67hghf4567",
@@ -136,3 +137,7 @@ const blogs = [
     __v: 0,
   },
 ];
+
+afterAll(async () => {
+  await mongoose.connection.close();
+});
