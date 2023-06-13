@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { create } from "../services/blogs";
 
-export default function BlogForm({ setBlogs, notification }) {
+export default function BlogForm({ setBlogs, notification, user }) {
   const [newBlog, setNewBlog] = useState({
     title: "Title",
     author: "Author",

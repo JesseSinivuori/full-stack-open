@@ -9,7 +9,7 @@ const App = () => {
   const [blogs, setBlogs] = useState([]);
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const [user, setUser] = useState(storedUser ?? null);
-
+  console.log(blogs);
   const getBlogs = async () => {
     try {
       const blogs = await getAll();
@@ -45,9 +45,9 @@ const App = () => {
     localStorage.removeItem("user");
     setUser(null);
   };
-  console.log(window.localStorage);
+
   const handleDelete = async (blog) => {
-    if (user.id !== blog.user.id && blog.user.id) {
+    if (user.id !== (blog.user.id ?? blog.user)) {
       return notification(
         "You don't have permission to delete this blog.",
         "error"
@@ -56,7 +56,7 @@ const App = () => {
 
     try {
       const id = blog.id;
-      remove(blog.id);
+      await remove(blog.id);
 
       setBlogs(blogs.filter((blog) => blog.id !== id));
       notification(`Blog "${blog.title}" deleted.`, "success");
@@ -81,7 +81,12 @@ const App = () => {
       <button type="submit" onClick={handleLogOut}>
         log out
       </button>
-      <BlogForm blogs={blogs} setBlogs={setBlogs} notification={notification} />
+      <BlogForm
+        blogs={blogs}
+        setBlogs={setBlogs}
+        notification={notification}
+        user={user}
+      />
       <h2>blogs</h2>
       <p>{`${user.name} logged in`}</p>
       {blogs.map((blog) => (
