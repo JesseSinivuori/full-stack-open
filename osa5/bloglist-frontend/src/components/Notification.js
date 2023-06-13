@@ -4,14 +4,17 @@ const Notification = ({ message, type }) => {
   }
 
   return (
-    <div
+    <p
       className="success"
       style={{
         color: type === "success" ? "green" : "red",
+        border: "solid 1px",
+        borderColor: type === "success" ? "green" : "red",
+        padding: 12,
       }}
     >
       {message}
-    </div>
+    </p>
   );
 };
 

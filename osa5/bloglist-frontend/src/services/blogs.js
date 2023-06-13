@@ -1,10 +1,36 @@
 import axios from "axios";
 const baseUrl = "/api/blogs";
 
-const getAll = () => {
-  const request = axios.get(baseUrl);
-  return request.then((response) => response.data);
+let token = null;
+
+export const setToken = (newToken) => {
+  token = `bearer ${newToken}`;
 };
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default { getAll };
+export const getAll = async () => {
+  try {
+    const res = await axios.get(baseUrl);
+    return res.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const create = async (newBlog) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  try {
+    const res = await axios.post(baseUrl, newBlog, config);
+    return res.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const remove = async (id) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  await axios.delete(`${baseUrl}/${id}`, config);
+};

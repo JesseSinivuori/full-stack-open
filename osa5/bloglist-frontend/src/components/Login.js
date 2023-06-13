@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { login } from "../services/login";
+import { setToken } from "../services/blogs";
 
-export default function Login({ setUser, showInfo }) {
+export default function Login({ setUser, notification }) {
   const [username, setUserName] = useState("Author");
   const [password, setPassword] = useState("author");
 
@@ -9,13 +10,13 @@ export default function Login({ setUser, showInfo }) {
     e.preventDefault();
     try {
       const user = await login({ username, password });
+      setToken(user.token);
       setUser(user);
-      localStorage.setItem("user", user);
+      localStorage.setItem("user", JSON.stringify(user));
       setUserName("");
       setPassword("");
-    } catch (error) {
-      console.error(error);
-      showInfo("Invalid login details.", "error");
+    } catch {
+      notification("Invalid login details.", "error");
     }
   };
 

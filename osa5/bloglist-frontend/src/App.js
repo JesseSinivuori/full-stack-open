@@ -1,58 +1,95 @@
 import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
-import blogService from "./services/blogs";
+import { getAll, setToken, remove } from "./services/blogs";
 import Login from "./components/Login";
-import Info from "./components/Info";
+import BlogForm from "./components/BlogForm";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-
-  const storedUser = window.localStorage.getItem("user");
+  const storedUser = JSON.parse(localStorage.getItem("user"));
   const [user, setUser] = useState(storedUser ?? null);
-  console.log(user);
+
   const getBlogs = async () => {
-    const blogs = await blogService.getAll();
-    setBlogs(blogs);
+    try {
+      const blogs = await getAll();
+      setBlogs(blogs);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
     getBlogs();
   }, []);
 
-  const [info, setInfo] = useState(null);
-  const [infoType, setInfoType] = useState();
+  useEffect(() => {
+    if (user) {
+      setToken(user.token);
+    }
+  }, [user]);
 
-  const showInfo = (message, type) => {
-    type === "success" ? setInfoType("success") : setInfoType("error");
-    setInfo(message);
-    setTimeout(() => setInfo(null), 4000);
+  const [notificationText, setNotificationText] = useState(null);
+  const [notificationType, setNotificationType] = useState(null);
+
+  const notification = (message, type) => {
+    type === "success"
+      ? setNotificationType("success")
+      : setNotificationType("error");
+    setNotificationText(message);
+
+    setTimeout(() => setNotificationText(null), 4000);
   };
 
   const handleLogOut = () => {
-    setUser(null);
     localStorage.removeItem("user");
+    setUser(null);
+  };
+  console.log(window.localStorage);
+  const handleDelete = async (blog) => {
+    if (user.id !== blog.user.id && blog.user.id) {
+      return notification(
+        "You don't have permission to delete this blog.",
+        "error"
+      );
+    }
+
+    try {
+      const id = blog.id;
+      remove(blog.id);
+
+      setBlogs(blogs.filter((blog) => blog.id !== id));
+      notification(`Blog "${blog.title}" deleted.`, "success");
+    } catch (error) {
+      notification("Unauthorized.", "error");
+    }
   };
 
   if (!user) {
     return (
       <>
-        <Info message={info} type={infoType} />
+        <Notification message={notificationText} type={notificationType} />
         <h2>log in to application</h2>
-        <Login setUser={setUser} showInfo={showInfo} />
+        <Login setUser={setUser} notification={notification} />
       </>
     );
   }
-  console.log(user);
+
   return (
     <div>
-      <Info message={info} type={infoType} />
+      <Notification message={notificationText} type={notificationType} />
       <button type="submit" onClick={handleLogOut}>
         log out
       </button>
+      <BlogForm blogs={blogs} setBlogs={setBlogs} notification={notification} />
       <h2>blogs</h2>
       <p>{`${user.name} logged in`}</p>
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog
+          key={blog.id}
+          blog={blog}
+          handleDelete={() => handleDelete(blog)}
+        />
       ))}
     </div>
   );
