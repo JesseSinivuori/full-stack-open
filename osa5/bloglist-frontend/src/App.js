@@ -23,12 +23,6 @@ const App = () => {
     getBlogs();
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      setToken(user.token);
-    }
-  }, [user]);
-
   const [notificationText, setNotificationText] = useState(null);
   const [notificationType, setNotificationType] = useState(null);
 
