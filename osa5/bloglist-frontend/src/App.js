@@ -48,7 +48,7 @@ const App = () => {
   };
 
   const handleDelete = async (blog) => {
-    if (user.id !== (blog.user.id ?? blog.user)) {
+    if (user.id !== blog.user.id) {
       return notification(
         "You don't have permission to delete this blog.",
         "error"
@@ -90,6 +90,7 @@ const App = () => {
         notification={notification}
         setShowCreateBlog={setShowCreateBlog}
         showCreateBlog={showCreateBlog}
+        user={user}
       />
       <h2>blogs</h2>
       <p>{`${user.name} logged in`}</p>

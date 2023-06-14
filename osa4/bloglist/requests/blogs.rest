@@ -31,6 +31,10 @@ Authorization: bearer {{token}}
     "userId": "64822318973c7147f952929e"
 }
 
+
+### Get one blog
+GET {{baseUrl}}/{{id}}
+
 ### Update the posted blog
 
 PUT {{baseUrl}}/{{id}}

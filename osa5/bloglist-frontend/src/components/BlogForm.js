@@ -7,13 +7,14 @@ export default function BlogForm({
   notification,
   setShowCreateBlog,
   showCreateBlog,
+  user,
 }) {
   const [newBlog, setNewBlog] = useState({
     title: "Title",
     author: "Author",
     url: "Url",
   });
-  console.log(newBlog);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -24,7 +25,12 @@ export default function BlogForm({
 
     try {
       const createdBlog = await create(newBlog);
-      setBlogs((prevBlogs) => prevBlogs.concat(createdBlog));
+      const createdBlogWithUser = {
+        ...createdBlog,
+        user: { name: user.name, id: user.id },
+      };
+      console.log(createdBlogWithUser);
+      setBlogs((prevBlogs) => prevBlogs.concat(createdBlogWithUser));
       setNewBlog({ title: "", author: "", url: "" });
       notification(`Blog "${newBlog.title}" created. `, "success");
       setShowCreateBlog(false);
