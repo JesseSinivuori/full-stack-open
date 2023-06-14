@@ -1,13 +1,19 @@
 import { useState } from "react";
 import { create } from "../services/blogs";
+import FormInput from "./FormInput";
 
-export default function BlogForm({ setBlogs, notification, user }) {
+export default function BlogForm({
+  setBlogs,
+  notification,
+  setShowCreateBlog,
+  showCreateBlog,
+}) {
   const [newBlog, setNewBlog] = useState({
     title: "Title",
     author: "Author",
-    url: "url",
+    url: "Url",
   });
-
+  console.log(newBlog);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -18,46 +24,39 @@ export default function BlogForm({ setBlogs, notification, user }) {
 
     try {
       const createdBlog = await create(newBlog);
-      console.log(createdBlog);
       setBlogs((prevBlogs) => prevBlogs.concat(createdBlog));
       setNewBlog({ title: "", author: "", url: "" });
       notification(`Blog "${newBlog.title}" created. `, "success");
+      setShowCreateBlog(false);
     } catch (error) {
       console.error(error);
     }
   };
 
+  if (!showCreateBlog)
+    return (
+      <button type="button" onClick={() => setShowCreateBlog(true)}>
+        create
+      </button>
+    );
+
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>create new</h2>
-      <div>
-        title
-        <input
-          type="text"
-          value={newBlog.title}
-          name="Title"
-          onChange={(e) => setNewBlog({ ...newBlog, title: e.target.value })}
-        />
-      </div>
-      <div>
-        author
-        <input
-          type="text"
-          value={newBlog.author}
-          name="Author"
-          onChange={(e) => setNewBlog({ ...newBlog, author: e.target.value })}
-        />
-      </div>
-      <div>
-        url
-        <input
-          type="text"
-          value={newBlog.url}
-          name="Url"
-          onChange={(e) => setNewBlog({ ...newBlog, url: e.target.value })}
-        />
-      </div>
-      <button type="submit">create</button>
-    </form>
+    <div>
+      <form onSubmit={handleSubmit}>
+        <h2>create new</h2>
+        {Object.keys(newBlog).map((prop) => (
+          <FormInput
+            key={prop}
+            text={prop}
+            value={newBlog[prop]}
+            onChange={(e) => setNewBlog({ ...newBlog, [prop]: e.target.value })}
+          />
+        ))}
+        <button type="submit">create</button>
+      </form>
+      <button type="button" onClick={() => setShowCreateBlog(false)}>
+        cancel
+      </button>
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
-import { getAll, setToken, remove } from "./services/blogs";
+import { getAll, remove, setToken } from "./services/blogs";
 import Login from "./components/Login";
 import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
@@ -9,7 +9,7 @@ const App = () => {
   const [blogs, setBlogs] = useState([]);
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const [user, setUser] = useState(storedUser ?? null);
-  console.log(blogs);
+
   const getBlogs = async () => {
     try {
       const blogs = await getAll();
@@ -22,6 +22,12 @@ const App = () => {
   useEffect(() => {
     getBlogs();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      setToken(user.token);
+    }
+  }, [user]);
 
   const [notificationText, setNotificationText] = useState(null);
   const [notificationType, setNotificationType] = useState(null);
@@ -38,6 +44,7 @@ const App = () => {
   const handleLogOut = () => {
     localStorage.removeItem("user");
     setUser(null);
+    setShowCreateBlog(false);
   };
 
   const handleDelete = async (blog) => {
@@ -59,6 +66,8 @@ const App = () => {
     }
   };
 
+  const [showCreateBlog, setShowCreateBlog] = useState(false);
+
   if (!user) {
     return (
       <>
@@ -79,7 +88,8 @@ const App = () => {
         blogs={blogs}
         setBlogs={setBlogs}
         notification={notification}
-        user={user}
+        setShowCreateBlog={setShowCreateBlog}
+        showCreateBlog={showCreateBlog}
       />
       <h2>blogs</h2>
       <p>{`${user.name} logged in`}</p>
